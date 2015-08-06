@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 /**
  * Created by armin on 06/08/15.
  */
-public class Retry<T, R extends Exception> {
+public class Retry<T> {
 
     static int someCounter = 5;
 
@@ -21,20 +21,20 @@ public class Retry<T, R extends Exception> {
             }
             return someCounter;
         };
-        System.out.println(new Retry().retry(5, 0, integerFailableSupplier));
+        System.out.println(new Retry().retry(5, 0, integerFailableSupplier, RuntimeException.class));
     }
 
-    public T retry(int maxRetries, int retryCount, FailableSupplier<T> supplier, R... onlyForTheseExceptions) {
+    public Try<T> retry(int maxRetries, int retryCount, FailableSupplier<T> supplier, Class<? extends Exception>... onlyForTheseExceptions) {
 
         Try<T> aTry = Try.apply(supplier);
         if (isValidException(aTry, onlyForTheseExceptions) && maxRetries > retryCount) {
             return retry(maxRetries, retryCount++, supplier);
         } else {
-            return aTry.get();
+            return aTry;
         }
     }
 
-    private boolean isValidException(Try<T> aTry, R... onlyForTheseExceptions) {
+    private boolean isValidException(Try<T> aTry, Class<? extends Exception>... onlyForTheseExceptions) {
         boolean isFailure = aTry.isFailure();
         if (isFailure) {
             if (onlyForTheseExceptions.length > 0) {
