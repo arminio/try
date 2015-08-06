@@ -21,14 +21,14 @@ public class Retry<T> {
             }
             return someCounter;
         };
-        System.out.println(new Retry().retry(5, 0, integerFailableSupplier, RuntimeException.class));
+        System.out.println(new Retry().retry(5, integerFailableSupplier, RuntimeException.class));
     }
 
-    public Try<T> retry(int maxRetries, int retryCount, FailableSupplier<T> supplier, Class<? extends Exception>... onlyForTheseExceptions) {
+    public Try<T> retry(int maxRetries, FailableSupplier<T> supplier, Class<? extends Exception>... onlyForTheseExceptions) {
 
         Try<T> aTry = Try.apply(supplier);
-        if (isValidException(aTry, onlyForTheseExceptions) && maxRetries > retryCount) {
-            return retry(maxRetries, retryCount++, supplier);
+        if (isValidException(aTry, onlyForTheseExceptions) && maxRetries >= 0) {
+            return retry(maxRetries--, supplier);
         } else {
             return aTry;
         }
