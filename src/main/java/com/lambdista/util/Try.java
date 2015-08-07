@@ -237,6 +237,17 @@ public abstract class Try<T> {
         }
     }
 
+
+    public static Try<Void> applyVoid(VoidFunction supplier) {
+        try {
+            supplier.run();
+            return new Success<>();
+        } catch (Throwable e) {
+            if (e instanceof Exception) return new Failure<>((Exception) e);
+            else throw ((Error) e);
+        }
+    }
+
     /**
      * Converts a {@code Try<Try<T>>} to a {@code Try<T>}.
      *
@@ -250,6 +261,8 @@ public abstract class Try<T> {
         else return t.get();
     }
 
+
+
     /**
      * Represents the successful result of a computation
      *
@@ -261,6 +274,9 @@ public abstract class Try<T> {
 
         public Success(T value) {
             this.value = value;
+        }
+        public Success() {
+            value = (T) Optional.empty();
         }
 
         @Override

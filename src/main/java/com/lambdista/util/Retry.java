@@ -1,34 +1,27 @@
 package com.lambdista.util;
 
 import java.util.Arrays;
-import java.util.function.Consumer;
 
 /**
  * Created by armin on 06/08/15.
  */
 public class Retry<T> {
 
-    static int someCounter = 5;
-
-    public static void main(String[] args) {
-        String x = "trying...";
-
-
-        FailableSupplier<Integer> integerFailableSupplier = () -> {
-            System.out.println(x + someCounter--);
-            if (someCounter > 3) {
-                throw new RuntimeException();
-            }
-            return someCounter;
-        };
-        System.out.println(new Retry().retry(5, integerFailableSupplier, RuntimeException.class));
-    }
-
     public Try<T> retry(int maxRetries, FailableSupplier<T> supplier, Class<? extends Exception>... onlyForTheseExceptions) {
 
         Try<T> aTry = Try.apply(supplier);
         if (isValidException(aTry, onlyForTheseExceptions) && maxRetries >= 0) {
             return retry(maxRetries--, supplier);
+        } else {
+            return aTry;
+        }
+    }
+
+    public Try<Void> retryVoid(int maxRetries, VoidFunction supplier, Class<? extends Exception>... onlyForTheseExceptions) {
+
+        Try<Void> aTry = Try.applyVoid(supplier);
+        if (isValidException((Try<T>) aTry, onlyForTheseExceptions) && maxRetries >= 0) {
+            return retryVoid(maxRetries--, supplier);
         } else {
             return aTry;
         }
