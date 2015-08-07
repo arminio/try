@@ -17,11 +17,11 @@ public class Retry<T> {
         }
     }
 
-    public Try<Void> retryVoid(int maxRetries, VoidFunction supplier, Class<? extends Exception>... onlyForTheseExceptions) {
+    public Try<Void> retry(int maxRetries, VoidFunction supplier, Class<? extends Exception>... onlyForTheseExceptions) {
 
         Try<Void> aTry = Try.applyVoid(supplier);
         if (isValidException((Try<T>) aTry, onlyForTheseExceptions) && maxRetries >= 0) {
-            return retryVoid(maxRetries--, supplier);
+            return retry(maxRetries--, supplier);
         } else {
             return aTry;
         }

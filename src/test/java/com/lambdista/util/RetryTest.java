@@ -2,8 +2,6 @@ package com.lambdista.util;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by armin.keyvanloo on 7/08/2015.
  */
@@ -51,7 +49,7 @@ public class RetryTest {
             }
         };
 
-        Try aTry = new Retry().retryVoid(5, voidFunction, RuntimeException.class);
+        Try aTry = new Retry().retry(5, voidFunction, RuntimeException.class);
         System.out.println(aTry);
 
     }
